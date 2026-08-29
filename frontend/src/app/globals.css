@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-blue: #1E3A8A;
+  --accent-gold: #EAB308;
+  --bg-ice: #EFF6FF;
+}
+
+body {
+  color: #0F172A;
+  background-color: #F8FAFC;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom UI Utilities */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 60%, #1D4ED8 100%);
+}
+
+.gold-badge {
+  background: linear-gradient(135deg, #EAB308 0%, #CA8A04 100%);
+  color: #FFFFFF;
+}
+
+.card-hover {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -6px rgba(30, 58, 138, 0.12);
+}
