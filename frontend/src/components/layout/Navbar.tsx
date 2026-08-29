@@ -11,7 +11,10 @@ export const Navbar = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
+  const [studentParentDropdownOpen, setStudentParentDropdownOpen] = useState(false);
+  const [mobileStudentParentOpen, setMobileStudentParentOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const studentParentDropdownRef = useRef<HTMLDivElement>(null);
   const { user, logout } = useAuthStore();
 
   const handleLogout = () => {
@@ -24,6 +27,9 @@ export const Navbar = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setLoginDropdownOpen(false);
+      }
+      if (studentParentDropdownRef.current && !studentParentDropdownRef.current.contains(event.target as Node)) {
+        setStudentParentDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -58,19 +64,95 @@ export const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-3 xl:gap-6 text-xs xl:text-sm font-semibold text-slate-700">
-            <Link href="/" className="hover:text-brand-blue-800 transition">Home</Link>
-            <Link href="/faculty" className="hover:text-brand-blue-800 transition">Faculty</Link>
-            <Link href="/results" className="hover:text-brand-blue-800 transition">Results</Link>
-            <Link href="/free-tests" className="hover:text-brand-blue-800 transition flex items-center gap-1 text-brand-gold-600 font-bold whitespace-nowrap">
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-3.5 2xl:gap-6 text-xs xl:text-sm font-semibold text-slate-700 mx-1 xl:mx-3">
+            <Link href="/" className="whitespace-nowrap hover:text-brand-blue-800 transition">Home</Link>
+            <Link href="/faculty" className="whitespace-nowrap hover:text-brand-blue-800 transition">Faculty</Link>
+
+            {/* Student & Parent Dropdown */}
+            <div className="relative shrink-0" ref={studentParentDropdownRef}>
+              <button
+                onClick={() => setStudentParentDropdownOpen(!studentParentDropdownOpen)}
+                className="whitespace-nowrap hover:text-brand-blue-800 transition flex items-center gap-1 font-semibold focus:outline-none shrink-0"
+              >
+                <span>Student & Parent</span>
+                <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${studentParentDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {studentParentDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                    Student & Parent Corner
+                  </div>
+
+                  <Link
+                    href="/login?role=student"
+                    onClick={() => setStudentParentDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-brand-blue-50 hover:text-brand-blue-800 transition"
+                  >
+                    <GraduationCap className="w-4 h-4 text-brand-blue-700 shrink-0" />
+                    <div>Student Portal</div>
+                  </Link>
+
+                  <Link
+                    href="/login?role=parent"
+                    onClick={() => setStudentParentDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition"
+                  >
+                    <Users className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div>Parent Portal</div>
+                  </Link>
+
+                  <Link
+                    href="/free-tests"
+                    onClick={() => setStudentParentDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition"
+                  >
+                    <Award className="w-4 h-4 text-brand-gold-500 shrink-0" />
+                    <div>Free Mock Test</div>
+                  </Link>
+
+                  <Link
+                    href="/scholarship-test"
+                    onClick={() => setStudentParentDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-800 transition"
+                  >
+                    <BookOpen className="w-4 h-4 text-indigo-600 shrink-0" />
+                    <div>Scholarship Exam</div>
+                  </Link>
+
+                  <Link
+                    href="/results"
+                    onClick={() => setStudentParentDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition"
+                  >
+                    <User className="w-4 h-4 text-rose-600 shrink-0" />
+                    <div>Top Rankers & Success Stories</div>
+                  </Link>
+
+                  <div className="border-t border-slate-100 mt-1 pt-1">
+                    <Link
+                      href="/book-demo"
+                      onClick={() => setStudentParentDropdownOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-brand-blue-800 hover:bg-brand-blue-50 transition"
+                    >
+                      <PhoneCall className="w-4 h-4 text-brand-blue-700 shrink-0" />
+                      <div>Book Free Demo Class</div>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Link href="/results" className="whitespace-nowrap hover:text-brand-blue-800 transition">Results</Link>
+            <Link href="/free-tests" className="whitespace-nowrap hover:text-brand-blue-800 transition flex items-center gap-1 text-brand-gold-600 font-bold">
               <Award className="w-3.5 h-3.5 text-brand-gold-500 shrink-0" /> Free Mock Test
             </Link>
-            <Link href="/scholarship-test" className="hover:text-brand-blue-800 transition whitespace-nowrap">Scholarship</Link>
-            <Link href="/contact" className="hover:text-brand-blue-800 transition">Contact</Link>
+            <Link href="/scholarship-test" className="whitespace-nowrap hover:text-brand-blue-800 transition">Scholarship</Link>
+            <Link href="/contact" className="whitespace-nowrap hover:text-brand-blue-800 transition">Contact</Link>
           </div>
 
           {/* Action CTAs & Portal Logins */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-3 pl-3 xl:pl-4 border-l border-slate-200 shrink-0">
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 pl-2 xl:pl-4 border-l border-slate-200 shrink-0">
             {user ? (
               <div className="flex items-center gap-2.5 shrink-0">
                 <Link
@@ -100,10 +182,10 @@ export const Navbar = () => {
                 <div className="relative shrink-0" ref={dropdownRef}>
                   <button
                     onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
-                    className="px-3 xl:px-4 py-2 text-xs xl:text-sm font-bold text-brand-blue-800 border border-brand-blue-800/30 hover:border-brand-blue-800 rounded-xl transition flex items-center gap-1.5 bg-brand-blue-50/50 hover:bg-brand-blue-50 whitespace-nowrap"
+                    className="px-2.5 xl:px-3.5 py-2 text-xs xl:text-sm font-bold text-brand-blue-800 border border-brand-blue-800/30 hover:border-brand-blue-800 rounded-xl transition flex items-center gap-1.5 bg-brand-blue-50/50 hover:bg-brand-blue-50 whitespace-nowrap"
                   >
                     <User className="w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0" />
-                    <span>Portal Login</span>
+                    <span>Login</span>
                     <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
 
@@ -168,7 +250,7 @@ export const Navbar = () => {
 
                 <Link
                   href="/admission"
-                  className="px-3.5 xl:px-5 py-2 xl:py-2.5 text-xs xl:text-sm font-bold text-white bg-brand-gold-500 hover:bg-brand-gold-600 rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-1.5 whitespace-nowrap shrink-0"
+                  className="px-3 xl:px-4.5 py-2 xl:py-2.5 text-xs xl:text-sm font-bold text-white bg-brand-gold-500 hover:bg-brand-gold-600 rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-1.5 whitespace-nowrap shrink-0"
                 >
                   <PhoneCall className="w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0" /> Apply Now
                 </Link>
@@ -194,6 +276,41 @@ export const Navbar = () => {
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 hover:text-brand-blue-800">Home</Link>
           <Link href="/courses" onClick={() => setIsOpen(false)} className="block py-2 hover:text-brand-blue-800">Courses (6th - 10th)</Link>
           <Link href="/faculty" onClick={() => setIsOpen(false)} className="block py-2 hover:text-brand-blue-800">Faculty</Link>
+
+          {/* Collapsible Student & Parent Menu */}
+          <div>
+            <button
+              onClick={() => setMobileStudentParentOpen(!mobileStudentParentOpen)}
+              className="w-full flex items-center justify-between py-2 text-slate-700 hover:text-brand-blue-800 font-semibold"
+            >
+              <span>Student & Parent</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileStudentParentOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {mobileStudentParentOpen && (
+              <div className="pl-4 py-1.5 space-y-2.5 border-l-2 border-brand-blue-100 ml-1 text-xs">
+                <Link href="/login?role=student" onClick={() => setIsOpen(false)} className="flex items-center gap-2 py-1 hover:text-brand-blue-800">
+                  <GraduationCap className="w-4 h-4 text-brand-blue-700 shrink-0" /> Student Portal
+                </Link>
+                <Link href="/login?role=parent" onClick={() => setIsOpen(false)} className="flex items-center gap-2 py-1 hover:text-emerald-800">
+                  <Users className="w-4 h-4 text-emerald-600 shrink-0" /> Parent Portal
+                </Link>
+                <Link href="/free-tests" onClick={() => setIsOpen(false)} className="flex items-center gap-2 py-1 hover:text-brand-blue-800">
+                  <Award className="w-4 h-4 text-brand-gold-500 shrink-0" /> Free Mock Test
+                </Link>
+                <Link href="/scholarship-test" onClick={() => setIsOpen(false)} className="flex items-center gap-2 py-1 hover:text-brand-blue-800">
+                  <BookOpen className="w-4 h-4 text-indigo-600 shrink-0" /> Scholarship Exam
+                </Link>
+                <Link href="/results" onClick={() => setIsOpen(false)} className="flex items-center gap-2 py-1 hover:text-brand-blue-800">
+                  <User className="w-4 h-4 text-rose-600 shrink-0" /> Top Rankers & Success Stories
+                </Link>
+                <Link href="/book-demo" onClick={() => setIsOpen(false)} className="flex items-center gap-2 py-1 hover:text-brand-blue-800 font-bold text-brand-blue-800">
+                  <PhoneCall className="w-4 h-4 text-brand-blue-700 shrink-0" /> Book Free Demo Class
+                </Link>
+              </div>
+            )}
+          </div>
+
           <Link href="/results" onClick={() => setIsOpen(false)} className="block py-2 hover:text-brand-blue-800">Results & Rankers</Link>
           <Link href="/free-tests" onClick={() => setIsOpen(false)} className="block py-2 text-brand-gold-600 font-bold">Free Mock Test</Link>
           <Link href="/scholarship-test" onClick={() => setIsOpen(false)} className="block py-2 hover:text-brand-blue-800">Scholarship Test</Link>

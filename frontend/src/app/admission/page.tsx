@@ -46,14 +46,14 @@ export default function AdmissionPage() {
       <div className="max-w-7xl mx-auto space-y-16">
         
         {/* Header Hero */}
-        <div className="bg-gradient-to-r from-brand-blue-950 via-brand-blue-900 to-slate-900 rounded-3xl p-8 sm:p-14 text-white shadow-2xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-gold-500 text-slate-950 text-xs font-black uppercase tracking-widest">
+        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-xl space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-gold-500 text-slate-950 text-xs font-black uppercase tracking-widest shadow-sm">
             <PhoneCall className="w-4 h-4" /> Academic Session 2026-27 Admissions Open
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight">
-            Online Admission & <span className="text-brand-gold-400">Enrollment Portal</span>
+          <h1 className="text-3xl sm:text-5xl font-black text-brand-blue-950 tracking-tight">
+            Online Admission & <span className="text-brand-gold-500">Enrollment Portal</span>
           </h1>
-          <p className="text-base text-slate-300 max-w-3xl leading-relaxed">
+          <p className="text-base text-slate-700 max-w-3xl leading-relaxed font-medium">
             Secure your seat for Class 6th to Class 10th CBSE/ICSE Board & Olympiad Foundation coaching batches. Small batch sizes, expert faculty, and proven top results!
           </p>
         </div>

@@ -47,7 +47,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="space-y-20 pb-16">
+    <div className="space-y-20 pb-16 overflow-x-hidden max-w-full">
 
       {/* --- HERO SECTION --- */}
       <section className="relative gradient-hero text-white pt-16 pb-24 overflow-hidden border-b-4 border-brand-gold-500">

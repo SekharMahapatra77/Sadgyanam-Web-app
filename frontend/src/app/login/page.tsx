@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Lock, Mail, UserCheck, GraduationCap, Users, ShieldCheck, UserCheck as TeacherIcon, Sparkles, Eye, EyeOff, User, Phone, UserPlus, LogIn } from 'lucide-react';
+import { Lock, Mail, UserCheck, GraduationCap, Users, ShieldCheck, UserCheck as TeacherIcon, Eye, EyeOff, User, Phone, UserPlus, LogIn } from 'lucide-react';
 import { api } from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -103,11 +103,6 @@ function LoginContent() {
 
     if (roleFromUrl && ROLES.some((r) => r.id === roleFromUrl)) {
       setActiveRole(roleFromUrl);
-      if (mode === 'login' && !email) {
-        setEmail(ROLES.find((r) => r.id === roleFromUrl)?.defaultEmail || '');
-      }
-    } else if (mode === 'login' && !email) {
-      setEmail(currentRoleConfig.defaultEmail);
     }
 
     if (modeFromUrl === 'register' || modeFromUrl === 'login') {
@@ -119,21 +114,12 @@ function LoginContent() {
     setActiveRole(role);
     setError('');
     setSuccessMsg('');
-    const config = ROLES.find((r) => r.id === role);
-    if (config && mode === 'login') {
-      setEmail(config.defaultEmail);
-    }
   };
 
   const handleModeSwitch = (newMode: ModeType) => {
     setMode(newMode);
     setError('');
     setSuccessMsg('');
-    if (newMode === 'login') {
-      setEmail(currentRoleConfig.defaultEmail);
-    } else {
-      setEmail('');
-    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -198,24 +184,6 @@ function LoginContent() {
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed. Please check details.');
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDemoLogin = async (role: RoleType) => {
-    setLoading(true);
-    setError('');
-    setSuccessMsg('');
-    const config = ROLES.find((r) => r.id === role);
-    if (!config) return;
-
-    try {
-      const res = await api.post('/auth/login', { email: config.defaultEmail, password: 'sadgyanam123' });
-      const { user, accessToken } = res.data.data;
-      setAuth(user, accessToken);
-      router.push(config.dashboardPath);
-    } catch (err: any) {
-      setError('Demo login error: ' + (err.response?.data?.message || err.message));
       setLoading(false);
     }
   };
@@ -357,36 +325,6 @@ function LoginContent() {
             )}
           </button>
         </form>
-
-        {/* Quick Demo Access Bar */}
-        <div className="pt-5 border-t border-slate-100 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-brand-gold-500" /> One-Click Demo Panel Access
-            </span>
-            <span className="text-[10px] text-slate-400">Password pre-filled</span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {ROLES.map((role) => (
-              <button
-                key={role.id}
-                type="button"
-                onClick={() => handleDemoLogin(role.id)}
-                className={`py-2.5 px-2 rounded-xl text-xs font-bold text-center transition border ${
-                  activeRole === role.id
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-md'
-                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
-                }`}
-              >
-                {role.id === 'student' && '🎓 Student'}
-                {role.id === 'parent' && '👨‍👩‍👧 Parent'}
-                {role.id === 'teacher' && '👨‍🏫 Teacher'}
-                {role.id === 'admin' && '👑 Admin'}
-              </button>
-            ))}
-          </div>
-        </div>
 
       </div>
     </div>
