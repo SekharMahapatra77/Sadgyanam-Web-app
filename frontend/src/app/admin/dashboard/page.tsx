@@ -36,6 +36,9 @@ import {
   Layers,
   MessageSquare,
   LogOut,
+  ChevronDown,
+  ChevronUp,
+  History,
 } from 'lucide-react';
 import { api, API_ORIGIN } from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -97,7 +100,16 @@ export default function AdminDashboard() {
   // Teacher Form Modal State
   const [showTeacherModal, setShowTeacherModal] = useState(false);
   const [editingTeacherId, setEditingTeacherId] = useState<string | null>(null);
-  const [teacherForm, setTeacherForm] = useState({
+  const [teacherForm, setTeacherForm] = useState<{
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+    confirmPassword: string;
+    qualification: string;
+    teachingSubject: string;
+    monthlySalary: string | number;
+  }>({
     name: '',
     email: '',
     phone: '',
@@ -105,23 +117,28 @@ export default function AdminDashboard() {
     confirmPassword: '',
     qualification: 'M.Sc. Physics / Educator',
     teachingSubject: 'Physics',
-    monthlySalary: 25000,
+    monthlySalary: '25000',
   });
 
   // Teacher Salary Details & Payment History Modal State
   const [showTeacherSalaryModal, setShowTeacherSalaryModal] = useState(false);
   const [selectedTeacherForSalary, setSelectedTeacherForSalary] = useState<any>(null);
-  const [paymentRecordForm, setPaymentRecordForm] = useState({
+  const [paymentRecordForm, setPaymentRecordForm] = useState<{
+    month: string;
+    paidDate: string;
+    paidAmount: string | number;
+    notes: string;
+  }>({
     month: 'August 2026',
     paidDate: new Date().toISOString().split('T')[0],
-    paidAmount: 25000,
+    paidAmount: '25000',
     notes: '',
   });
 
   // Edit Salary Modal State
   const [showEditSalaryModal, setShowEditSalaryModal] = useState(false);
   const [editingSalaryTeacherId, setEditingSalaryTeacherId] = useState<string | null>(null);
-  const [newSalaryValue, setNewSalaryValue] = useState<number>(0);
+  const [newSalaryValue, setNewSalaryValue] = useState<number | string>('0');
 
   // Parent Form Modal State
   const [showParentModal, setShowParentModal] = useState(false);
@@ -140,15 +157,29 @@ export default function AdminDashboard() {
   // Course Form Modal State (Add / Edit)
   const [showCourseModal, setShowCourseModal] = useState(false);
   const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
-  const [courseForm, setCourseForm] = useState({
+  const [courseForm, setCourseForm] = useState<{
+    title: string;
+    slug: string;
+    shortBio: string;
+    grade: string;
+    category: string;
+    description: string;
+    price: string | number;
+    durationMonths: string | number;
+    features: string;
+    subjects: string;
+    thumbnail: string;
+    pdfUrl: string;
+    isPublished: boolean;
+  }>({
     title: '',
     slug: '',
     shortBio: '',
     grade: 'CLASS_10',
     category: 'ACADEMIC_BOARDS',
     description: '',
-    price: 24999,
-    durationMonths: 12,
+    price: '24999',
+    durationMonths: '12',
     features: 'Daily Live Classes, 24/7 AI Tutor, Bi-Weekly CBT Tests',
     subjects: 'Mathematics, Physics, Chemistry, Biology',
     thumbnail: '',
@@ -190,13 +221,23 @@ export default function AdminDashboard() {
   // Manual Payment Form Modal State (Add)
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [editingPaymentId, setEditingPaymentId] = useState<string | null>(null);
-  const [paymentForm, setPaymentForm] = useState({
+  const [paymentForm, setPaymentForm] = useState<{
+    studentId: string;
+    courseId: string;
+    amount: string | number;
+    totalCourseFee: string | number;
+    discount: string | number;
+    scholarship: string | number;
+    paymentMethod: string;
+    transactionId: string;
+    notes: string;
+  }>({
     studentId: '',
     courseId: '',
-    amount: 10000,
-    totalCourseFee: 25000,
-    discount: 0,
-    scholarship: 0,
+    amount: '10000',
+    totalCourseFee: '25000',
+    discount: '0',
+    scholarship: '0',
     paymentMethod: 'CASH',
     transactionId: '',
     notes: 'Initial Installment',
@@ -204,6 +245,7 @@ export default function AdminDashboard() {
 
   // Printable Receipt Modal State
   const [receiptItem, setReceiptItem] = useState<any>(null);
+  const [expandedPaymentGroupKey, setExpandedPaymentGroupKey] = useState<string | null>(null);
 
   // Study Material PDF Modal State (Add / Edit)
   const [showMaterialModal, setShowMaterialModal] = useState(false);
@@ -376,18 +418,22 @@ export default function AdminDashboard() {
         setErrorMsg('Password and Confirm Password do not match.');
         return;
       }
+      const payload = {
+        ...teacherForm,
+        monthlySalary: teacherForm.monthlySalary === '' ? 0 : Number(teacherForm.monthlySalary),
+      };
       if (editingTeacherId) {
-        const res = await api.put(`/admin/teachers/${editingTeacherId}`, teacherForm);
-        setTeachersList((prev) => prev.map((t) => (t._id === editingTeacherId ? (res.data?.data || { ...t, ...teacherForm }) : t)));
+        const res = await api.put(`/admin/teachers/${editingTeacherId}`, payload);
+        setTeachersList((prev) => prev.map((t) => (t._id === editingTeacherId ? (res.data?.data || { ...t, ...payload }) : t)));
         showNotification('Teacher profile & account updated!');
       } else {
-        const res = await api.post('/admin/teachers', teacherForm);
+        const res = await api.post('/admin/teachers', payload);
         if (res.data?.data) setTeachersList((prev) => [res.data.data, ...prev]);
         showNotification('New faculty added!');
       }
       setShowTeacherModal(false);
       setEditingTeacherId(null);
-      setTeacherForm({ name: '', email: '', phone: '', password: '', confirmPassword: '', qualification: 'M.Sc. Physics / Educator', teachingSubject: 'Physics', monthlySalary: 25000 });
+      setTeacherForm({ name: '', email: '', phone: '', password: '', confirmPassword: '', qualification: 'M.Sc. Physics / Educator', teachingSubject: 'Physics', monthlySalary: '25000' });
     } catch (err: any) {
       setErrorMsg(err.response?.data?.message || 'Failed to save teacher.');
     }
@@ -397,9 +443,10 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (!editingSalaryTeacherId) return;
     try {
-      const res = await api.patch(`/admin/teachers/${editingSalaryTeacherId}/salary`, { monthlySalary: newSalaryValue });
+      const salaryNum = newSalaryValue === '' ? 0 : Number(newSalaryValue);
+      const res = await api.patch(`/admin/teachers/${editingSalaryTeacherId}/salary`, { monthlySalary: salaryNum });
       if (res.data?.data) {
-        setTeachersList((prev) => prev.map((t) => (t._id === editingSalaryTeacherId ? { ...t, monthlySalary: newSalaryValue } : t)));
+        setTeachersList((prev) => prev.map((t) => (t._id === editingSalaryTeacherId ? { ...t, monthlySalary: salaryNum } : t)));
         showNotification('Teacher monthly salary updated!');
       }
       setShowEditSalaryModal(false);
@@ -413,7 +460,11 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (!selectedTeacherForSalary) return;
     try {
-      const res = await api.post(`/admin/teachers/${selectedTeacherForSalary._id}/salary-payment`, paymentRecordForm);
+      const payload = {
+        ...paymentRecordForm,
+        paidAmount: paymentRecordForm.paidAmount === '' ? 0 : Number(paymentRecordForm.paidAmount),
+      };
+      const res = await api.post(`/admin/teachers/${selectedTeacherForSalary._id}/salary-payment`, payload);
       if (res.data?.data) {
         const updatedTeacher = res.data.data;
         setTeachersList((prev) => prev.map((t) => (t._id === selectedTeacherForSalary._id ? updatedTeacher : t)));
@@ -478,12 +529,17 @@ export default function AdminDashboard() {
   const handleSaveCourse = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...courseForm,
+        price: courseForm.price === '' ? 0 : Number(courseForm.price),
+        durationMonths: courseForm.durationMonths === '' ? 0 : Number(courseForm.durationMonths),
+      };
       if (editingCourseId) {
-        const res = await api.put(`/courses/${editingCourseId}`, courseForm);
-        setCoursesList((prev) => prev.map((c) => (c._id === editingCourseId ? (res.data?.data || { ...c, ...courseForm }) : c)));
+        const res = await api.put(`/courses/${editingCourseId}`, payload);
+        setCoursesList((prev) => prev.map((c) => (c._id === editingCourseId ? (res.data?.data || { ...c, ...payload }) : c)));
         showNotification('Course updated successfully!');
       } else {
-        const res = await api.post('/courses', courseForm);
+        const res = await api.post('/courses', payload);
         if (res.data?.data) setCoursesList((prev) => [res.data.data, ...prev]);
         showNotification('New course created & published!');
       }
@@ -584,9 +640,16 @@ export default function AdminDashboard() {
   const handleSavePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...paymentForm,
+        amount: paymentForm.amount === '' ? 0 : Number(paymentForm.amount),
+        totalCourseFee: paymentForm.totalCourseFee === '' ? 0 : Number(paymentForm.totalCourseFee),
+        discount: paymentForm.discount === '' ? 0 : Number(paymentForm.discount),
+        scholarship: paymentForm.scholarship === '' ? 0 : Number(paymentForm.scholarship),
+      };
       const res = editingPaymentId
-        ? await api.put(`/admin/payments/${editingPaymentId}`, paymentForm)
-        : await api.post('/admin/payments', paymentForm);
+        ? await api.put(`/admin/payments/${editingPaymentId}`, payload)
+        : await api.post('/admin/payments', payload);
       if (res.data?.data) setPaymentsList((prev) => editingPaymentId ? prev.map((item) => item._id === editingPaymentId ? res.data.data : item) : [res.data.data, ...prev]);
       setShowPaymentModal(false);
       setEditingPaymentId(null);
@@ -841,7 +904,7 @@ export default function AdminDashboard() {
               <button
                 onClick={() => {
                   setEditingTeacherId(null);
-                  setTeacherForm({ name: '', email: '', phone: '', password: '', confirmPassword: '', qualification: 'M.Sc. Physics / Educator', teachingSubject: 'Physics', monthlySalary: 25000 });
+                  setTeacherForm({ name: '', email: '', phone: '', password: '', confirmPassword: '', qualification: 'M.Sc. Physics / Educator', teachingSubject: 'Physics', monthlySalary: '25000' });
                   setShowTeacherModal(true);
                 }}
                 className="px-4 py-2 bg-brand-blue-800 text-white font-bold rounded-xl text-xs hover:bg-brand-blue-900 transition flex items-center gap-1.5 shadow-md"
@@ -874,8 +937,8 @@ export default function AdminDashboard() {
                     grade: 'CLASS_10',
                     category: 'ACADEMIC_BOARDS',
                     description: '',
-                    price: 24999,
-                    durationMonths: 12,
+                    price: '24999',
+                    durationMonths: '12',
                     features: 'Daily Live Classes, 24/7 AI Tutor, Bi-Weekly CBT Tests',
                     subjects: 'Mathematics, Physics, Chemistry, Biology',
                     thumbnail: '',
@@ -943,10 +1006,10 @@ export default function AdminDashboard() {
                   setPaymentForm({
                     studentId: studentsList[0]?._id || '',
                     courseId: coursesList[0]?._id || '',
-                    amount: 10000,
-                    totalCourseFee: 25000,
-                    discount: 0,
-                    scholarship: 0,
+                    amount: '10000',
+                    totalCourseFee: '25000',
+                    discount: '0',
+                    scholarship: '0',
                     paymentMethod: 'CASH',
                     transactionId: '',
                     notes: 'Manual Fee Receipt',
@@ -1211,7 +1274,7 @@ export default function AdminDashboard() {
                 <button
                   onClick={() => {
                     setEditingTeacherId(null);
-                    setTeacherForm({ name: '', email: '', phone: '', password: '', confirmPassword: '', qualification: 'M.Sc. Physics / Educator', teachingSubject: 'Physics', monthlySalary: 25000 });
+                    setTeacherForm({ name: '', email: '', phone: '', password: '', confirmPassword: '', qualification: 'M.Sc. Physics / Educator', teachingSubject: 'Physics', monthlySalary: '25000' });
                     setShowTeacherModal(true);
                   }}
                   className="px-4 py-2 bg-brand-blue-800 text-white font-bold rounded-xl text-xs hover:bg-brand-blue-900 transition flex items-center gap-1.5 shrink-0 shadow-md"
@@ -1278,7 +1341,7 @@ export default function AdminDashboard() {
                                 setPaymentRecordForm({
                                   month: 'August 2026',
                                   paidDate: new Date().toISOString().split('T')[0],
-                                  paidAmount: tech.monthlySalary || 25000,
+                                  paidAmount: String(tech.monthlySalary ?? 25000),
                                   notes: '',
                                 });
                                 setShowTeacherSalaryModal(true);
@@ -1290,7 +1353,7 @@ export default function AdminDashboard() {
                             <button
                               onClick={() => {
                                 setEditingSalaryTeacherId(tech._id);
-                                setNewSalaryValue(tech.monthlySalary || 0);
+                                setNewSalaryValue(String(tech.monthlySalary ?? 0));
                                 setShowEditSalaryModal(true);
                               }}
                               className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-lg transition text-[11px] inline-flex items-center gap-1 border border-slate-300"
@@ -1308,7 +1371,7 @@ export default function AdminDashboard() {
                                   confirmPassword: '',
                                   qualification: tech.qualification || '',
                                   teachingSubject: tech.teachingSubject || 'Physics',
-                                  monthlySalary: tech.monthlySalary || 25000,
+                                  monthlySalary: String(tech.monthlySalary ?? 25000),
                                 });
                                 setShowTeacherModal(true);
                               }}
@@ -1466,8 +1529,8 @@ export default function AdminDashboard() {
                     grade: 'CLASS_10',
                     category: 'ACADEMIC_BOARDS',
                     description: '',
-                    price: 24999,
-                    durationMonths: 12,
+                    price: '24999',
+                    durationMonths: '12',
                     features: 'Daily Live Classes, 24/7 AI Tutor, Bi-Weekly CBT Tests',
                     subjects: 'Mathematics, Physics, Chemistry, Biology',
                     thumbnail: '',
@@ -1524,8 +1587,8 @@ export default function AdminDashboard() {
                             grade: course.grade || 'CLASS_10',
                             category: course.category || 'ACADEMIC_BOARDS',
                             description: course.description || '',
-                            price: course.price || course.fee || 24999,
-                            durationMonths: course.durationMonths || 12,
+                            price: String(course.price || course.fee || 24999),
+                            durationMonths: String(course.durationMonths || 12),
                             features: Array.isArray(course.features) ? course.features.join(', ') : '',
                             subjects: Array.isArray(course.subjects) ? course.subjects.join(', ') : '',
                             thumbnail: course.thumbnail || '',
@@ -1910,92 +1973,310 @@ export default function AdminDashboard() {
         )}
 
         {/* 11. MANUAL PAYMENTS & INVOICES TAB */}
-        {activeTab === 'PAYMENTS' && (
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <div>
-                <h2 className="font-extrabold text-slate-900 text-lg flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-emerald-600" /> Fees & Manual Payments Ledger
-                </h2>
-                <p className="text-xs text-slate-500">Record cash, UPI, cheque, and bank transfer receipts connected to students.</p>
-              </div>
-              <button
-                onClick={() => {
-                  setPaymentForm({
-                    studentId: studentsList[0]?._id || '',
-                    courseId: coursesList[0]?._id || '',
-                    amount: 10000,
-                    totalCourseFee: 25000,
-                    discount: 0,
-                    scholarship: 0,
-                    paymentMethod: 'CASH',
-                    transactionId: '',
-                    notes: 'Manual Fee Payment',
-                  });
-                  setShowPaymentModal(true);
-                }}
-                className="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-md"
-              >
-                <Plus className="w-4 h-4" /> Record Payment
-              </button>
-            </div>
+        {activeTab === 'PAYMENTS' && (() => {
+          // 1. Group payment records by studentId + courseId
+          const groupedMap = new Map<string, {
+            groupKey: string;
+            studentId: string;
+            courseId: string;
+            studentName: string;
+            courseTitle: string;
+            payments: any[];
+            totalPaid: number;
+            totalCourseFee: number;
+            discount: number;
+            scholarship: number;
+            remainingFee: number;
+            latestPayment: any;
+          }>();
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-600">
-                <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
-                  <tr>
-                    <th className="p-3">Invoice No</th>
-                    <th className="p-3">Student Name</th>
-                    <th className="p-3">Method</th>
-                    <th className="p-3">Paid Amount</th>
-                    <th className="p-3">Remaining Fee</th>
-                    <th className="p-3">Payment Date</th>
-                    <th className="p-3 text-right">Actions (Receipt / Delete)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
-                  {paymentsList.map((pay) => {
-                    const stdName = pay.studentId?.userId?.name || pay.studentId?.name || pay.studentName || 'Student';
-                    return (
-                      <tr key={pay._id} className="hover:bg-slate-50">
-                        <td className="p-3 font-bold text-slate-900 font-mono">{pay.invoiceNumber || '#INV-101'}</td>
-                        <td className="p-3 font-bold text-slate-900">{stdName}</td>
-                        <td className="p-3"><span className="px-2.5 py-1 bg-slate-100 text-slate-800 font-bold rounded-lg">{pay.paymentMethod || 'CASH'}</span></td>
-                        <td className="p-3 font-black text-emerald-600">₹{(pay.amount || 0).toLocaleString('en-IN')}</td>
-                        <td className="p-3 font-black text-amber-700">₹{Math.max(0, Number(pay.totalCourseFee || 0) - Number(pay.discount || 0) - Number(pay.scholarship || 0) - paymentsList.filter((item) => (item.studentId?._id || item.studentId) === (pay.studentId?._id || pay.studentId)).reduce((sum, item) => sum + Number(item.amount || 0), 0)).toLocaleString('en-IN')}</td>
-                        <td className="p-3 text-slate-500">{new Date(pay.paymentDate || pay.createdAt).toLocaleDateString()}</td>
-                        <td className="p-3 text-right space-x-2">
-                          <button
-                            onClick={() => setReceiptItem(pay)}
-                            className="p-1.5 bg-brand-blue-50 text-brand-blue-800 font-bold rounded-lg hover:bg-brand-blue-100 transition inline-flex items-center gap-1 text-xs"
-                          >
-                            <Printer className="w-3.5 h-3.5" /> Receipt
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditingPaymentId(pay._id);
-                              setPaymentForm({ studentId: pay.studentId?._id || '', courseId: pay.courseId?._id || '', amount: pay.amount || 0, totalCourseFee: pay.totalCourseFee || 0, discount: pay.discount || 0, scholarship: pay.scholarship || 0, paymentMethod: pay.paymentMethod || 'CASH', transactionId: pay.transactionId || '', notes: pay.notes || '' });
-                              setShowPaymentModal(true);
-                            }}
-                            className="p-1.5 bg-white border border-slate-300 text-slate-700 font-bold rounded-lg hover:bg-slate-100 transition inline-flex items-center gap-1 text-xs"
-                          >
-                            <Edit className="w-3.5 h-3.5" /> Edit
-                          </button>
-                          <button
-                            onClick={() => setDeleteConfirmItem({ id: pay._id, type: 'PAYMENT', name: pay.invoiceNumber || 'Payment' })}
-                            className="p-1.5 bg-rose-50 text-rose-700 font-bold rounded-lg hover:bg-rose-100 transition"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+          paymentsList.forEach((pay) => {
+            const sId = typeof pay.studentId === 'object' ? pay.studentId?._id : pay.studentId;
+            const cId = typeof pay.courseId === 'object' ? pay.courseId?._id : (pay.courseId || '');
+            const key = `${sId || 'unknown'}_${cId || 'nocourse'}`;
+
+            const stdName = pay.studentId?.userId?.name || pay.studentId?.name || pay.studentName || 'Student';
+            const cTitle = pay.courseId?.title || pay.courseTitle || '';
+
+            if (!groupedMap.has(key)) {
+              groupedMap.set(key, {
+                groupKey: key,
+                studentId: sId || '',
+                courseId: cId || '',
+                studentName: stdName,
+                courseTitle: cTitle,
+                payments: [],
+                totalPaid: 0,
+                totalCourseFee: 0,
+                discount: 0,
+                scholarship: 0,
+                remainingFee: 0,
+                latestPayment: null,
+              });
+            }
+
+            const group = groupedMap.get(key)!;
+            group.payments.push(pay);
+          });
+
+          const groupedList = Array.from(groupedMap.values()).map((group) => {
+            // Sort payments newest first by paymentDate or createdAt
+            group.payments.sort((a, b) => {
+              const dateA = new Date(a.paymentDate || a.createdAt).getTime();
+              const dateB = new Date(b.paymentDate || b.createdAt).getTime();
+              return dateB - dateA;
+            });
+
+            group.latestPayment = group.payments[0];
+
+            // Sum up total paid across all successful / non-failed payments for this student & course
+            group.totalPaid = group.payments
+              .filter((p) => !p.status || p.status === 'SUCCESS' || p.status === 'COMPLETED')
+              .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+            group.totalCourseFee = Number(group.latestPayment.totalCourseFee || 0);
+            group.discount = Number(group.latestPayment.discount || 0);
+            group.scholarship = Number(group.latestPayment.scholarship || 0);
+
+            group.remainingFee = Math.max(
+              0,
+              group.totalCourseFee - group.discount - group.scholarship - group.totalPaid
+            );
+
+            return group;
+          });
+
+          // Filter grouped list by search query if any
+          const filteredGroups = groupedList.filter((group) => {
+            const q = searchQuery.toLowerCase();
+            if (!q) return true;
+            return (
+              group.studentName.toLowerCase().includes(q) ||
+              group.courseTitle.toLowerCase().includes(q) ||
+              group.payments.some((p) => (p.invoiceNumber || '').toLowerCase().includes(q) || (p.paymentMethod || '').toLowerCase().includes(q))
+            );
+          });
+
+          return (
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
+              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div>
+                  <h2 className="font-extrabold text-slate-900 text-lg flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-emerald-600" /> Fees & Manual Payments Ledger
+                  </h2>
+                  <p className="text-xs text-slate-500">Record cash, UPI, cheque, and bank transfer receipts connected to students.</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setPaymentForm({
+                      studentId: studentsList[0]?._id || '',
+                      courseId: coursesList[0]?._id || '',
+                      amount: '10000',
+                      totalCourseFee: '25000',
+                      discount: '0',
+                      scholarship: '0',
+                      paymentMethod: 'CASH',
+                      transactionId: '',
+                      notes: 'Manual Fee Payment',
+                    });
+                    setShowPaymentModal(true);
+                  }}
+                  className="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-md"
+                >
+                  <Plus className="w-4 h-4" /> Record Payment
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                    <tr>
+                      <th className="p-3">Invoice No</th>
+                      <th className="p-3">Student Name</th>
+                      <th className="p-3">Method</th>
+                      <th className="p-3">Paid Amount</th>
+                      <th className="p-3">Remaining Fee</th>
+                      <th className="p-3">Payment Date</th>
+                      <th className="p-3 text-right">Actions (Receipt / Delete)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {filteredGroups.length > 0 ? (
+                      filteredGroups.map((group) => {
+                        const pay = group.latestPayment;
+                        const isExpanded = expandedPaymentGroupKey === group.groupKey;
+                        return (
+                          <React.Fragment key={group.groupKey}>
+                            <tr className="hover:bg-slate-50">
+                              <td className="p-3 font-bold text-slate-900 font-mono">{pay.invoiceNumber || '#INV-101'}</td>
+                              <td className="p-3 font-bold text-slate-900">
+                                <div>{group.studentName}</div>
+                                {group.courseTitle && (
+                                  <div className="text-[10px] text-brand-blue-700 font-semibold">{group.courseTitle}</div>
+                                )}
+                              </td>
+                              <td className="p-3">
+                                <span className="px-2.5 py-1 bg-slate-100 text-slate-800 font-bold rounded-lg">{pay.paymentMethod || 'CASH'}</span>
+                              </td>
+                              <td className="p-3 font-black text-emerald-600">
+                                <div>₹{(pay.amount || 0).toLocaleString('en-IN')}</div>
+                                <span className="block text-[10px] text-slate-400 font-normal mt-0.5">Recent</span>
+                              </td>
+                              <td className="p-3 font-black text-amber-700">₹{group.remainingFee.toLocaleString('en-IN')}</td>
+                              <td className="p-3 text-slate-500">
+                                <div>{new Date(pay.paymentDate || pay.createdAt).toLocaleDateString()}</div>
+                                <span className="block text-[10px] text-slate-400 font-normal mt-0.5">Recent</span>
+                              </td>
+                              <td className="p-3 text-right space-x-2">
+                                <button
+                                  onClick={() => setReceiptItem(pay)}
+                                  className="p-1.5 bg-brand-blue-50 text-brand-blue-800 font-bold rounded-lg hover:bg-brand-blue-100 transition inline-flex items-center gap-1 text-xs"
+                                  title="Print Latest Receipt"
+                                >
+                                  <Printer className="w-3.5 h-3.5" /> Receipt
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditingPaymentId(pay._id);
+                                    setPaymentForm({
+                                      studentId: pay.studentId?._id || pay.studentId || '',
+                                      courseId: pay.courseId?._id || pay.courseId || '',
+                                      amount: String(pay.amount || 0),
+                                      totalCourseFee: String(pay.totalCourseFee || 0),
+                                      discount: String(pay.discount || 0),
+                                      scholarship: String(pay.scholarship || 0),
+                                      paymentMethod: pay.paymentMethod || 'CASH',
+                                      transactionId: pay.transactionId || '',
+                                      notes: pay.notes || '',
+                                    });
+                                    setShowPaymentModal(true);
+                                  }}
+                                  className="p-1.5 bg-white border border-slate-300 text-slate-700 font-bold rounded-lg hover:bg-slate-100 transition inline-flex items-center gap-1 text-xs"
+                                  title="Edit Latest Payment"
+                                >
+                                  <Edit className="w-3.5 h-3.5" /> Edit
+                                </button>
+                                <button
+                                  onClick={() => setDeleteConfirmItem({ id: pay._id, type: 'PAYMENT', name: pay.invoiceNumber || 'Payment' })}
+                                  className="p-1.5 bg-rose-50 text-rose-700 font-bold rounded-lg hover:bg-rose-100 transition"
+                                  title="Delete Latest Payment"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => setExpandedPaymentGroupKey(isExpanded ? null : group.groupKey)}
+                                  className={`px-2 py-1.5 rounded-lg text-xs font-bold transition inline-flex items-center gap-1 border ${
+                                    isExpanded
+                                      ? 'bg-brand-blue-800 text-white border-brand-blue-800'
+                                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300'
+                                  }`}
+                                  title="View Complete Payment History"
+                                >
+                                  <History className="w-3.5 h-3.5" />
+                                  <span>History ({group.payments.length})</span>
+                                  {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                                </button>
+                              </td>
+                            </tr>
+
+                            {/* EXPANDABLE PAYMENT HISTORY ROW */}
+                            {isExpanded && (
+                              <tr className="bg-slate-50/80">
+                                <td colSpan={7} className="p-4 border-t border-b border-slate-200">
+                                  <div className="p-4 bg-white rounded-2xl border border-slate-200 space-y-3 shadow-inner">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                                      <div className="flex items-center gap-2">
+                                        <History className="w-4 h-4 text-brand-blue-800" />
+                                        <h4 className="font-extrabold text-slate-900 text-xs uppercase tracking-wider">
+                                          Payment History ({group.payments.length} Records) — {group.studentName}
+                                        </h4>
+                                      </div>
+                                      <div className="text-xs text-slate-500 font-medium">
+                                        Total Course Fee: <span className="font-bold text-slate-900">₹{group.totalCourseFee.toLocaleString('en-IN')}</span> | Total Paid: <span className="font-bold text-emerald-700">₹{group.totalPaid.toLocaleString('en-IN')}</span> | Remaining: <span className="font-bold text-amber-700">₹{group.remainingFee.toLocaleString('en-IN')}</span>
+                                      </div>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                      <table className="w-full text-left text-xs text-slate-600">
+                                        <thead className="bg-slate-100/70 text-slate-700 font-bold">
+                                          <tr>
+                                            <th className="p-2.5">Invoice No</th>
+                                            <th className="p-2.5">Paid Amount</th>
+                                            <th className="p-2.5">Payment Method</th>
+                                            <th className="p-2.5">Payment Date</th>
+                                            <th className="p-2.5">Transaction Ref / Notes</th>
+                                            <th className="p-2.5 text-right">Actions</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100 font-medium">
+                                          {group.payments.map((item: any, idx: number) => (
+                                            <tr key={item._id || idx} className="hover:bg-slate-50">
+                                              <td className="p-2.5 font-bold font-mono text-slate-900">{item.invoiceNumber || '-'}</td>
+                                              <td className="p-2.5 font-extrabold text-emerald-700">₹{(item.amount || 0).toLocaleString('en-IN')}</td>
+                                              <td className="p-2.5"><span className="px-2 py-0.5 bg-slate-100 text-slate-800 font-bold rounded text-[11px]">{item.paymentMethod || 'CASH'}</span></td>
+                                              <td className="p-2.5 text-slate-600">{new Date(item.paymentDate || item.createdAt).toLocaleDateString()}</td>
+                                              <td className="p-2.5 text-slate-500 italic">{item.transactionId || item.notes || '-'}</td>
+                                              <td className="p-2.5 text-right space-x-1.5">
+                                                <button
+                                                  onClick={() => setReceiptItem(item)}
+                                                  className="p-1 bg-brand-blue-50 text-brand-blue-800 font-bold rounded hover:bg-brand-blue-100 transition text-[11px]"
+                                                  title="Print Receipt"
+                                                >
+                                                  <Printer className="w-3.5 h-3.5" />
+                                                </button>
+                                                <button
+                                                  onClick={() => {
+                                                    setEditingPaymentId(item._id);
+                                                    setPaymentForm({
+                                                      studentId: item.studentId?._id || item.studentId || '',
+                                                      courseId: item.courseId?._id || item.courseId || '',
+                                                      amount: String(item.amount || 0),
+                                                      totalCourseFee: String(item.totalCourseFee || 0),
+                                                      discount: String(item.discount || 0),
+                                                      scholarship: String(item.scholarship || 0),
+                                                      paymentMethod: item.paymentMethod || 'CASH',
+                                                      transactionId: item.transactionId || '',
+                                                      notes: item.notes || '',
+                                                    });
+                                                    setShowPaymentModal(true);
+                                                  }}
+                                                  className="p-1 bg-white border border-slate-300 text-slate-700 font-bold rounded hover:bg-slate-100 transition text-[11px]"
+                                                  title="Edit Record"
+                                                >
+                                                  <Edit className="w-3.5 h-3.5" />
+                                                </button>
+                                                <button
+                                                  onClick={() => setDeleteConfirmItem({ id: item._id, type: 'PAYMENT', name: item.invoiceNumber || 'Payment' })}
+                                                  className="p-1 bg-rose-50 text-rose-700 font-bold rounded hover:bg-rose-100 transition text-[11px]"
+                                                  title="Delete Record"
+                                                >
+                                                  <Trash2 className="w-3.5 h-3.5" />
+                                                </button>
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="p-4 text-center text-slate-400 italic">
+                          No payment records found.
                         </td>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* 12. STUDY MATERIAL PDF MANAGEMENT TAB */}
         {activeTab === 'MATERIALS' && (
@@ -2455,7 +2736,7 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <label className="block font-bold text-slate-700 mb-1">Monthly Salary (₹)</label>
-                    <input type="number" required min="0" value={teacherForm.monthlySalary} onChange={(e) => setTeacherForm({ ...teacherForm, monthlySalary: Number(e.target.value) })} className="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-bold text-emerald-700" />
+                    <input type="number" required min="0" value={teacherForm.monthlySalary} onChange={(e) => setTeacherForm({ ...teacherForm, monthlySalary: e.target.value })} className="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-bold text-emerald-700" />
                   </div>
                 </div>
                 <div>
@@ -2684,7 +2965,7 @@ export default function AdminDashboard() {
                     required
                     min="0"
                     value={paymentRecordForm.paidAmount}
-                    onChange={(e) => setPaymentRecordForm({ ...paymentRecordForm, paidAmount: Number(e.target.value) })}
+                    onChange={(e) => setPaymentRecordForm({ ...paymentRecordForm, paidAmount: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 font-extrabold text-emerald-700"
                   />
                 </div>
@@ -2762,7 +3043,7 @@ export default function AdminDashboard() {
                   required
                   min="0"
                   value={newSalaryValue}
-                  onChange={(e) => setNewSalaryValue(Number(e.target.value))}
+                  onChange={(e) => setNewSalaryValue(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-extrabold text-emerald-700 text-sm"
                 />
               </div>
@@ -2813,11 +3094,11 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Course Fee (₹)</label>
-                  <input type="number" required value={courseForm.price} onChange={(e) => setCourseForm({ ...courseForm, price: Number(e.target.value) })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-bold text-emerald-700" />
+                  <input type="number" required value={courseForm.price} onChange={(e) => setCourseForm({ ...courseForm, price: e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-bold text-emerald-700" />
                 </div>
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Duration (Months)</label>
-                  <input type="number" required value={courseForm.durationMonths} onChange={(e) => setCourseForm({ ...courseForm, durationMonths: Number(e.target.value) })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300" />
+                  <input type="number" required value={courseForm.durationMonths} onChange={(e) => setCourseForm({ ...courseForm, durationMonths: e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300" />
                 </div>
               </div>
               <div>
@@ -2949,13 +3230,13 @@ export default function AdminDashboard() {
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="block font-bold text-slate-700 mb-1">Total Course Fee</label><input type="number" min="0" required value={paymentForm.totalCourseFee} onChange={(e) => setPaymentForm({ ...paymentForm, totalCourseFee: Number(e.target.value) })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300" /></div>
-                <div><label className="block font-bold text-slate-700 mb-1">Scholarship / Discount</label><input type="number" min="0" value={paymentForm.scholarship} onChange={(e) => setPaymentForm({ ...paymentForm, scholarship: Number(e.target.value), discount: Number(e.target.value) })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300" /></div>
+                <div><label className="block font-bold text-slate-700 mb-1">Total Course Fee</label><input type="number" min="0" required value={paymentForm.totalCourseFee} onChange={(e) => setPaymentForm({ ...paymentForm, totalCourseFee: e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300" /></div>
+                <div><label className="block font-bold text-slate-700 mb-1">Scholarship / Discount</label><input type="number" min="0" value={paymentForm.scholarship} onChange={(e) => setPaymentForm({ ...paymentForm, scholarship: e.target.value, discount: e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300" /></div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Amount Paid (₹)</label>
-                  <input type="number" required value={paymentForm.amount} onChange={(e) => setPaymentForm({ ...paymentForm, amount: Number(e.target.value) })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-bold text-emerald-600" />
+                  <input type="number" required value={paymentForm.amount} onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-bold text-emerald-600" />
                 </div>
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Payment Method</label>
