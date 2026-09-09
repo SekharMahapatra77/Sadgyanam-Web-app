@@ -324,6 +324,20 @@ function LoginContent() {
               </>
             )}
           </button>
+
+          {activeRole === 'admin' && (
+            <div className="text-center pt-2">
+              <p className="text-xs text-slate-600 font-medium">
+                Don&apos;t have an account?{' '}
+                <Link
+                  href="/register?role=admin"
+                  className="font-bold text-brand-blue-800 hover:text-brand-blue-900 hover:underline"
+                >
+                  Register
+                </Link>
+              </p>
+            </div>
+          )}
         </form>
 
       </div>

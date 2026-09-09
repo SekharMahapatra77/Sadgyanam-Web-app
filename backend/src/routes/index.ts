@@ -41,6 +41,7 @@ router.get('/health', (req, res) => {
 
 // --- Auth Routes ---
 router.post('/auth/register', AuthController.register);
+router.post('/auth/register-admin', AuthController.registerAdmin);
 router.post('/auth/login', AuthController.login);
 router.post('/auth/refresh', AuthController.refresh);
 router.get('/auth/me', authenticateJWT, AuthController.getMe);

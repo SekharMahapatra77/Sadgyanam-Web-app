@@ -16,9 +16,13 @@ export class AuthController {
         return ApiResponse.error(res, 'Name, email, phone, and password are required', 400);
       }
 
-      const existingUser = await User.findOne({ email });
+      if (role === 'SUPER_ADMIN') {
+        return ApiResponse.error(res, 'Creation of SUPER_ADMIN is not permitted', 403);
+      }
+
+      const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
       if (existingUser) {
-        return ApiResponse.error(res, 'Email address is already registered', 400);
+        return ApiResponse.error(res, 'An account with this email already exists.', 400);
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -26,7 +30,7 @@ export class AuthController {
 
       const user = await User.create({
         name,
-        email,
+        email: email.toLowerCase().trim(),
         phone,
         passwordHash,
         role: role as UserRole,
@@ -70,6 +74,54 @@ export class AuthController {
           ...tokens,
         },
         'Registration successful',
+        201
+      );
+    } catch (error: any) {
+      return ApiResponse.error(res, error.message, 500);
+    }
+  }
+
+  static async registerAdmin(req: Request, res: Response) {
+    try {
+      const { name, email, phone, password, confirmPassword } = req.body;
+
+      if (!name || !email || !phone || !password) {
+        return ApiResponse.error(res, 'Full Name, email, phone, and password are required', 400);
+      }
+
+      if (confirmPassword && password !== confirmPassword) {
+        return ApiResponse.error(res, 'Passwords do not match', 400);
+      }
+
+      const normalizedEmail = email.toLowerCase().trim();
+      const existingUser = await User.findOne({ email: normalizedEmail });
+      if (existingUser) {
+        return ApiResponse.error(res, 'An account with this email already exists.', 400);
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(password, salt);
+
+      const user = await User.create({
+        name: name.trim(),
+        email: normalizedEmail,
+        phone: phone.trim(),
+        passwordHash,
+        role: 'ADMIN',
+      });
+
+      return ApiResponse.success(
+        res,
+        {
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+          },
+        },
+        'Admin account created successfully',
         201
       );
     } catch (error: any) {
