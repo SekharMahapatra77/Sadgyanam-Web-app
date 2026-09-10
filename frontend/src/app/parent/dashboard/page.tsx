@@ -85,16 +85,16 @@ export default function ParentDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 min-w-0 max-w-full overflow-x-hidden">
       
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-brand-blue-900 via-brand-blue-800 to-slate-900 text-white rounded-3xl p-8 shadow-xl border-b-4 border-brand-gold-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="bg-gradient-to-r from-brand-blue-900 via-brand-blue-800 to-slate-900 text-white rounded-3xl p-5 sm:p-8 shadow-xl border-b-4 border-brand-gold-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
         <div>
           <span className="px-3 py-1 bg-brand-gold-500/20 text-brand-gold-400 font-bold text-xs rounded-full border border-brand-gold-500/40">
             SADGYANAM Parent Monitoring Portal
           </span>
-          <h1 className="text-3xl font-black mt-2">Welcome, {user?.name || 'Parent'} 👋</h1>
-          <p className="text-slate-300 text-sm mt-1">
+          <h1 className="text-2xl sm:text-3xl font-black mt-2">Welcome, {user?.name || 'Parent'} 👋</h1>
+          <p className="text-slate-300 text-xs sm:text-sm mt-1">
             Parent Account: <span className="text-white font-semibold">{user?.email || 'parent@sadgyanam.edu.in'}</span>
             {overviewData?.selectedChild && (
               <>
@@ -108,7 +108,7 @@ export default function ParentDashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0 flex-wrap">
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 flex-wrap w-full sm:w-auto justify-between sm:justify-end">
           {/* Multi-Child Selector */}
           {overviewData?.children && overviewData.children.length > 1 && (
             <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/20">
@@ -137,7 +137,7 @@ export default function ParentDashboard() {
       </div>
 
       {/* Portal Tabs Header */}
-      <div className="flex gap-2 border-b border-slate-200 overflow-x-auto pb-1 text-xs font-bold">
+      <div className="flex gap-2 border-b border-slate-200 overflow-x-auto pb-2 text-xs font-bold scrollbar-thin max-w-full">
         {[
           { id: 'OVERVIEW', label: '1. Child Summary & Overview' },
           { id: 'REPORT', label: '2. Detailed Test History & Marks' },

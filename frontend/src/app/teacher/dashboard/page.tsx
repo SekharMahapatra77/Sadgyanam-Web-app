@@ -30,10 +30,13 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { api } from '@/services/api';
+import { PortalSidebarDrawer } from '@/components/portal/PortalSidebarDrawer';
+import { PortalMobileHeader } from '@/components/portal/PortalMobileHeader';
 
 export default function TeacherDashboard() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -394,51 +397,33 @@ export default function TeacherDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 flex">
+    <div className="min-h-screen bg-slate-100 flex flex-col lg:flex-row min-w-0 max-w-full overflow-x-hidden">
       {/* Teacher Sidebar */}
-      <aside className="w-72 bg-slate-900 text-white flex flex-col border-r border-slate-800 shrink-0">
-        <div className="p-6 border-b border-slate-800 space-y-1">
-          <h2 className="text-xl font-black text-white tracking-wide">SADGYANAM FACULTY</h2>
-          <p className="text-xs text-brand-gold-400 font-bold uppercase tracking-widest">
-            {user?.name || 'Educator Portal'}
-          </p>
-        </div>
+      <PortalSidebarDrawer
+        isOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
+        title="SADGYANAM FACULTY"
+        subtitle={user?.name || 'Educator Portal'}
+        items={teacherModules}
+        activeTab={activeTab}
+        onSelectTab={(id) => setActiveTab(id)}
+        handleLogout={handleLogout}
+        logoutText="Logout Faculty"
+        activeColorClass="bg-brand-blue-800 text-white font-extrabold shadow-sm scale-[1.01]"
+        badgeText="Faculty Portal"
+      />
 
-        <nav className="flex-1 p-4 overflow-y-auto space-y-1 text-xs font-semibold text-slate-300">
-          {teacherModules.map((mod) => {
-            const IconComp = mod.icon;
-            const isActive = activeTab === mod.id;
-            return (
-              <button
-                key={mod.id}
-                type="button"
-                onClick={() => setActiveTab(mod.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-left ${
-                  isActive
-                    ? 'bg-brand-blue-800 text-white font-extrabold shadow-sm scale-[1.01]'
-                    : 'hover:bg-slate-800 text-slate-300'
-                }`}
-              >
-                <IconComp className="w-4 h-4 shrink-0 text-brand-gold-400" />
-                <span className="truncate">{mod.name}</span>
-              </button>
-            );
-          })}
-        </nav>
+      <div className="flex-1 flex flex-col min-w-0 max-w-full">
+        {/* Mobile Header Bar */}
+        <PortalMobileHeader
+          portalTitle="SADGYANAM FACULTY"
+          userName={user?.name || 'Faculty Member'}
+          userRole="Educator"
+          onOpenSidebar={() => setIsMobileSidebarOpen(true)}
+        />
 
-        {/* Sidebar Footer Logout */}
-        <div className="p-4 border-t border-slate-800">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-rose-600/20 text-rose-300 hover:bg-rose-600 hover:text-white rounded-xl font-bold text-xs transition border border-rose-500/30"
-          >
-            <LogOut className="w-4 h-4" /> Logout Faculty
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="flex-1 p-8 overflow-y-auto space-y-8">
+        {/* Main Content Area */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 overflow-y-auto min-w-0 w-full max-w-full">
         {/* Top Header */}
         <div className="bg-gradient-to-r from-brand-blue-900 via-brand-blue-800 to-slate-900 text-white p-6 rounded-2xl shadow-lg border-b-4 border-brand-gold-500 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -1018,6 +1003,7 @@ export default function TeacherDashboard() {
           </div>
         )}
       </main>
+    </div>
 
       {/* ADD / EDIT NEEDS ATTENTION MODAL */}
       {addAttentionModal && (

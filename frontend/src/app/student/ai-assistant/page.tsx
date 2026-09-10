@@ -53,7 +53,7 @@ export default function AIAssistantPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 min-w-0 max-w-full overflow-x-hidden">
       
       {/* Navigation & Logout Bar */}
       <div className="flex justify-between items-center">
@@ -69,12 +69,12 @@ export default function AIAssistantPage() {
       </div>
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-brand-blue-900 to-indigo-950 text-white rounded-2xl p-6 shadow-lg flex items-center gap-4 border-b-4 border-brand-gold-500">
-        <div className="w-12 h-12 rounded-2xl bg-brand-gold-500 text-slate-900 flex items-center justify-center font-bold shrink-0">
-          <BrainCircuit className="w-7 h-7" />
+      <div className="bg-gradient-to-r from-brand-blue-900 to-indigo-950 text-white rounded-2xl p-4 sm:p-6 shadow-lg flex items-center gap-3 sm:gap-4 border-b-4 border-brand-gold-500">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-brand-gold-500 text-slate-900 flex items-center justify-center font-bold shrink-0">
+          <BrainCircuit className="w-6 h-6 sm:w-7 sm:h-7" />
         </div>
         <div>
-          <h1 className="text-2xl font-black">SADGYANAM AI Study Assistant</h1>
+          <h1 className="text-xl sm:text-2xl font-black">SADGYANAM AI Study Assistant</h1>
           <p className="text-xs text-brand-gold-400 font-medium">
             24/7 Educational Tutor tailored for Class 6th to 10th School & Olympiad Preparation
           </p>
@@ -82,7 +82,7 @@ export default function AIAssistantPage() {
       </div>
 
       {/* Chat Box Area */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[520px]">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[450px] sm:h-[520px]">
         <div className="flex-1 p-6 overflow-y-auto space-y-4">
           {messages.map((m, i) => (
             <div

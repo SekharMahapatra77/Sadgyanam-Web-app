@@ -101,30 +101,30 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 min-w-0 max-w-full overflow-x-hidden">
 
       {/* Top Banner Greeting */}
-      <div className="bg-gradient-to-r from-brand-blue-900 via-brand-blue-800 to-slate-900 rounded-3xl p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b-4 border-brand-gold-500">
+      <div className="bg-gradient-to-r from-brand-blue-900 via-brand-blue-800 to-slate-900 rounded-3xl p-5 sm:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6 border-b-4 border-brand-gold-500">
         <div>
           <span className="px-3 py-1 bg-brand-gold-500/20 text-brand-gold-400 border border-brand-gold-500/40 rounded-full font-bold text-xs">
             {overviewData?.student?.bannerClassText || (user as any)?.grade || 'Class 10th CBSE & Foundation'}
           </span>
-          <h1 className="text-3xl font-black mt-2">Welcome, {overviewData?.student?.name || user?.name || 'Aarav Patel'} 👋</h1>
-          <p className="text-slate-300 text-sm mt-1">
-            Student ID: <span className="text-white font-semibold">{overviewData?.student?.enrollmentNo || user?.email || 'student@sadgyanam.edu.in'}</span> | Keep up the consistent effort!
+          <h1 className="text-2xl sm:text-3xl font-black mt-2">Welcome, {overviewData?.student?.name || user?.name || 'Aarav Patel'} 👋</h1>
+          <p className="text-slate-300 text-xs sm:text-sm mt-1">
+            Student ID: <span className="text-white font-semibold">{overviewData?.student?.enrollmentNo || user?.email || 'student@student.sadgyanam.edu.in'}</span> | Keep up the consistent effort!
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0 w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('AI')}
-            className="px-5 py-3 bg-brand-gold-500 text-slate-950 font-extrabold rounded-xl hover:bg-brand-gold-400 transition shadow-md text-sm flex items-center gap-2 shrink-0"
+            className="px-4 sm:px-5 py-2.5 sm:py-3 bg-brand-gold-500 text-slate-950 font-extrabold rounded-xl hover:bg-brand-gold-400 transition shadow-md text-xs sm:text-sm flex items-center gap-2 shrink-0 justify-center flex-1 sm:flex-none"
           >
             <BrainCircuit className="w-4 h-4" /> Ask SADGYANAM AI Tutor
           </button>
           <button
             onClick={handleLogout}
-            className="px-4 py-3 bg-rose-600/90 hover:bg-rose-600 text-white font-bold rounded-xl transition shadow-md text-sm flex items-center gap-2 shrink-0 border border-rose-500/30"
+            className="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-rose-600/90 hover:bg-rose-600 text-white font-bold rounded-xl transition shadow-md text-xs sm:text-sm flex items-center gap-2 shrink-0 border border-rose-500/30 justify-center"
           >
             <LogOut className="w-4 h-4" /> Logout
           </button>
@@ -132,7 +132,7 @@ export default function StudentDashboard() {
       </div>
 
       {/* Student Portal Navigation Tabs */}
-      <div className="flex gap-2 border-b border-slate-200 overflow-x-auto pb-1 text-xs font-bold">
+      <div className="flex gap-2 border-b border-slate-200 overflow-x-auto pb-2 text-xs font-bold scrollbar-thin max-w-full">
         {[
           { id: 'OVERVIEW', label: '1. My Dashboard Overview' },
           { id: 'COURSES', label: '2. My Enrolled Courses & Notes' },

@@ -39,8 +39,8 @@ export default function StudentCoursesPage() {
     : materials.filter((m) => (m.subjectId?.name || m.subjectName || 'General') === selectedSubjectFilter);
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-50 py-6 sm:py-10 px-4 sm:px-6 lg:px-8 min-w-0 max-w-full overflow-x-hidden">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8 min-w-0 max-w-full">
 
         {/* Navigation back & Logout */}
         <div className="flex justify-between items-center">
@@ -56,12 +56,12 @@ export default function StudentCoursesPage() {
         </div>
 
         {/* Page Title & Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-8 rounded-3xl border border-slate-200 shadow-md">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-md">
           <div>
             <span className="px-3 py-1 bg-brand-blue-100 text-brand-blue-800 text-[11px] font-extrabold rounded-full uppercase tracking-wider">
               Notes Library
             </span>
-            <h1 className="text-3xl font-black text-slate-900 mt-2">All Study Notes</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">All Study Notes</h1>
             <p className="text-xs text-slate-500 font-medium mt-1">
               Access notes and study materials uploaded by SADGYANAM faculty.
             </p>
@@ -73,7 +73,7 @@ export default function StudentCoursesPage() {
 
         {/* Subject Filter Pills */}
         {subjectsList.length > 2 && (
-          <div className="flex gap-2 overflow-x-auto pb-2 text-xs font-bold">
+          <div className="flex gap-2 overflow-x-auto pb-2 text-xs font-bold scrollbar-thin max-w-full">
             {subjectsList.map((subj) => (
               <button
                 key={subj}

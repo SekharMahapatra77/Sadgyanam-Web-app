@@ -115,25 +115,25 @@ export default function ExamPage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-100 flex flex-col min-w-0 max-w-full overflow-x-hidden">
       {/* Exam Header */}
-      <header className="bg-brand-blue-900 text-white px-6 py-4 flex justify-between items-center border-b-4 border-brand-gold-500 shadow-md">
+      <header className="bg-brand-blue-900 text-white px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b-4 border-brand-gold-500 shadow-md min-w-0 max-w-full">
         <div>
-          <h1 className="font-black text-xl text-white">{testData.title}</h1>
+          <h1 className="font-black text-lg sm:text-xl text-white leading-snug">{testData.title}</h1>
           <p className="text-xs text-brand-gold-400 font-semibold">Total Questions: {testData.questions.length} | Marks: {testData.totalMarks}</p>
         </div>
 
         {/* Timer */}
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-xl border border-slate-700">
-            <Clock className="w-5 h-5 text-brand-gold-400 animate-pulse" />
-            <span className="font-mono font-bold text-lg text-white">{formatTime(timeLeftSeconds)}</span>
+        <div className="flex items-center justify-between w-full sm:w-auto gap-4 sm:gap-6 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+          <div className="flex items-center gap-2 bg-slate-800 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-slate-700">
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold-400 animate-pulse" />
+            <span className="font-mono font-bold text-base sm:text-lg text-white">{formatTime(timeLeftSeconds)}</span>
           </div>
 
           <button
             onClick={handleFinalSubmit}
             disabled={submitting}
-            className="px-6 py-2 bg-brand-gold-500 text-slate-900 font-extrabold rounded-lg hover:bg-brand-gold-400 transition shadow-md text-sm"
+            className="px-4 sm:px-6 py-2 bg-brand-gold-500 text-slate-900 font-extrabold rounded-lg hover:bg-brand-gold-400 transition shadow-md text-xs sm:text-sm"
           >
             {submitting ? 'Submitting...' : 'Submit Test'}
           </button>
@@ -141,10 +141,10 @@ export default function ExamPage({ params }: { params: { id: string } }) {
       </header>
 
       {/* Main Body */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 max-w-7xl mx-auto w-full p-6 gap-6">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 max-w-7xl mx-auto w-full p-4 sm:p-6 gap-6 min-w-0">
         
         {/* Question Area */}
-        <div className="lg:col-span-8 bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="lg:col-span-8 bg-white rounded-2xl p-4 sm:p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
           <div className="space-y-6">
             
             <div className="flex justify-between items-center border-b border-slate-100 pb-4">

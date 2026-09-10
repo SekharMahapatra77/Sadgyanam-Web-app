@@ -16,8 +16,8 @@ export default function StudentTestsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-50 py-6 sm:py-10 px-4 sm:px-6 lg:px-8 min-w-0 max-w-full overflow-x-hidden">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8 min-w-0 max-w-full">
         
         <div className="flex justify-between items-center">
           <Link href="/student/dashboard" className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-brand-blue-800 transition">
@@ -31,9 +31,9 @@ export default function StudentTestsPage() {
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-md">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-md">
           <div>
-            <h1 className="text-2xl font-black text-slate-900">Student CBT Test Series Engine</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900">Student CBT Test Series Engine</h1>
             <p className="text-xs text-slate-500 font-medium mt-1">Class 10th CBSE Board & Foundation Mock Tests</p>
           </div>
           <Link

@@ -42,10 +42,13 @@ import {
 } from 'lucide-react';
 import { api, API_ORIGIN } from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
+import { PortalSidebarDrawer } from '@/components/portal/PortalSidebarDrawer';
+import { PortalMobileHeader } from '@/components/portal/PortalMobileHeader';
 
 export default function AdminDashboard() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -809,57 +812,37 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex">
+    <div className="min-h-screen bg-slate-100 flex flex-col lg:flex-row min-w-0 max-w-full overflow-x-hidden">
       {/* Sidebar Navigation */}
-      <aside className="w-72 bg-brand-blue-900 text-white flex flex-col border-r border-slate-800 shrink-0">
-        <div className="p-6 border-b border-slate-800 space-y-1">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-brand-gold-400 shrink-0" />
-            <h2 className="text-xl font-black text-white tracking-wide">SADGYANAM ADMIN</h2>
-          </div>
-          <p className="text-xs text-brand-gold-400 font-bold uppercase tracking-widest">
-            {user?.name || 'Super Administrator'}
-          </p>
-        </div>
+      <PortalSidebarDrawer
+        isOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
+        title="SADGYANAM ADMIN"
+        subtitle={user?.name || 'Super Administrator'}
+        items={adminModules}
+        activeTab={activeTab}
+        onSelectTab={(id) => {
+          setActiveTab(id);
+          setSearchQuery('');
+          setInquiryTypeFilter('ALL');
+        }}
+        handleLogout={handleLogout}
+        logoutText="Logout Admin"
+        headerIcon={<GraduationCap className="w-5 h-5 text-brand-gold-400 shrink-0" />}
+        badgeText="Master Admin"
+      />
 
-        <nav className="flex-1 p-4 overflow-y-auto space-y-1 text-xs font-semibold text-slate-300">
-          {adminModules.map((mod) => {
-            const IconComponent = mod.icon;
-            const isActive = activeTab === mod.id;
-            return (
-              <button
-                key={mod.id}
-                type="button"
-                onClick={() => {
-                  setActiveTab(mod.id);
-                  setSearchQuery('');
-                  setInquiryTypeFilter('ALL');
-                }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-left ${isActive
-                  ? 'bg-brand-gold-500 text-slate-950 font-extrabold shadow-md scale-[1.01]'
-                  : 'hover:bg-slate-800 text-slate-300'
-                  }`}
-              >
-                <IconComponent className="w-4 h-4 shrink-0" />
-                <span className="truncate">{mod.name}</span>
-              </button>
-            );
-          })}
-        </nav>
+      <div className="flex-1 flex flex-col min-w-0 max-w-full">
+        {/* Mobile Header Bar */}
+        <PortalMobileHeader
+          portalTitle="SADGYANAM ADMIN"
+          userName={user?.name || 'Administrator'}
+          userRole="Super Admin"
+          onOpenSidebar={() => setIsMobileSidebarOpen(true)}
+        />
 
-        {/* Sidebar Footer Logout */}
-        <div className="p-4 border-t border-slate-800">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-rose-600/20 text-rose-300 hover:bg-rose-600 hover:text-white rounded-xl font-bold text-xs transition border border-rose-500/30"
-          >
-            <LogOut className="w-4 h-4" /> Logout Admin
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="flex-1 p-8 overflow-y-auto space-y-8">
+        {/* Main Content Area */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 overflow-y-auto min-w-0 w-full max-w-full">
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
           <div>
@@ -2593,6 +2576,7 @@ export default function AdminDashboard() {
           </div>
         )}
       </main>
+    </div>
 
       {/* STUDENT MODAL */}
       {showStudentModal && (() => {
